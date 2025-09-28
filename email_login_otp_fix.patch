@@ -1,0 +1,25 @@
+diff --git a/web/modules/contrib/email_login_otp/src/Services/Otp.php b/web/modules/contrib/email_login_otp/src/Services/Otp.php
+index ecb4c485..557708bf 100644
+--- a/web/modules/contrib/email_login_otp/src/Services/Otp.php
++++ b/web/modules/contrib/email_login_otp/src/Services/Otp.php
+@@ -196,14 +196,16 @@ public function getExpirationTime($uid) {
+   /**
+    * Fetches a user value by given field name.
+    */
+-  private function getUserField($field) {
++    private function getUserField($field) {
++    $currentUserName = \Drupal::currentUser()->getAccountName();
++    $username = !empty($currentUserName) ? $currentUserName : $this->username;
+     $query = $this->database->select('users_field_data', 'u')
+       ->fields('u', [$field])
+-      ->condition('name', $this->username, '=')
++      ->condition('name', $username, '=')
+       ->execute()
+       ->fetchAssoc();
+-    return $query[$field];
+-  }
++    return $query[$field] ?? NULL;
++    }
+ 
+   /**
+    * Fetches a value from the settings table by the given field.
