@@ -1,0 +1,14 @@
+diff --git a/web/themes/contrib/aristotle/aristotle.theme b/web/themes/contrib/aristotle/aristotle.theme
+index 202e488d..09971073 100644
+--- a/aristotle.theme
++++ b/aristotle.theme
+@@ -443,7 +443,8 @@ function aristotle_preprocess_menu__main(&$variables) {
+   if ($variables['logged_in'] !== TRUE) {
+     return;
+   }
+-
++  $current_user = \Drupal::currentUser();
++  $variables['user_roles_menu'] = $current_user->getRoles();
+   // Add management dropdown menu block to the main menu.
+   try {
+     $block = Block::load('opigno_admin');
