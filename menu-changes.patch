@@ -58,7 +58,7 @@ index e0e8c270..0133b3c6 100644
 +                           </ul>
 +                        </li>
 +                     </ul>
-+                      {% else if 'administrator' in user_roles_menu %} 
++                      {% elseif 'administrator' in user_roles_menu %} 
 +                      <ul>
 +                        <li>
 +                           <a href="" title="Global settings">Statistics</a>
@@ -103,7 +103,7 @@ index e0e8c270..0133b3c6 100644
 +                           </ul>
 +                        </li>
 +                     </ul>
-+                    {% else if 'administrator' in user_roles_menu %} 
++                    {% elseif 'administrator' in user_roles_menu %} 
 +                       <ul>
 +                        <li>
 +                           <a href="" title="Global settings">Users</a>
