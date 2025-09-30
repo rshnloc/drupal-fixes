@@ -1,7 +1,7 @@
 diff --git a/aristotle.theme b/aristotle.theme
 index 12af0d77..67f6dcfe 100644
---- a/aristotle.theme
-+++ b/aristotle.theme
+--- a/web/themes/contrib/aristotle/aristotle.theme
++++ b/web/themes/contrib/aristotle/aristotle.theme
 @@ -440,7 +440,10 @@ function aristotle_preprocess_block(&$variables) {
   * Implements hook_preprocess_HOOK().
   */
@@ -15,8 +15,8 @@ index 12af0d77..67f6dcfe 100644
    }
 diff --git a/templates/menu/menu--main.html.twig b/templates/menu/menu--main.html.twig
 index e0e8c270..8898e360 100644
---- a/templates/menu/menu--main.html.twig
-+++ b/templates/menu/menu--main.html.twig
+--- a/web/themes/contrib/aristotle/templates/menu/menu--main.html.twig
++++ b/web/themes/contrib/aristotle/templates/menu/menu--main.html.twig
 @@ -1,76 +1,158 @@
  {#
  /**
