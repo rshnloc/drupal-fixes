@@ -1,7 +1,7 @@
-diff --git a/web/modules/contrib/email_login_otp/src/Services/Otp.php b/web/modules/contrib/email_login_otp/src/Services/Otp.php
+diff --git a/src/Services/Otp.php b/src/Services/Otp.php
 index ecb4c485..557708bf 100644
---- a/web/modules/contrib/email_login_otp/src/Services/Otp.php
-+++ b/web/modules/contrib/email_login_otp/src/Services/Otp.php
+--- a/src/Services/Otp.php
++++ b/src/Services/Otp.php
 @@ -196,14 +196,16 @@ public function getExpirationTime($uid) {
    /**
     * Fetches a user value by given field name.
