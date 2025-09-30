@@ -1,0 +1,32 @@
+diff --git a/web/modules/contrib/opigno_statistics/src/Services/UserStatisticsManager.php b/web/modules/contrib/opigno_statistics/src/Services/UserStatisticsManager.php
+index a5269513..4c2a0b46 100644
+--- a/src/Services/UserStatisticsManager.php
++++ b/src/Services/UserStatisticsManager.php
+@@ -560,16 +560,21 @@ public function getUserRole(?AccountInterface $user = NULL): TranslatableMarkup
+     }
+ 
+     $roles = $user->getRoles(TRUE);
+-    if (!$roles) {
+-      $role = $this->t('Student');
+-    }
++     if (in_array('super_administrator', $roles)) {
++    return $this->t('Super Administrator');
++  }
+     elseif (in_array('administrator', $roles)) {
+-      $role = $this->t('Administrator');
++      return $this->t('Administrator');
++    }
++    elseif (in_array('developer', $roles)) {
++      return $this->t('Developer');
++    }
++    elseif (in_array('learner', $roles)) {
++      return $this->t('Learner');
+     }
+     else {
+-      $role = $this->t('Manager');
++      return $this->t('Student'); // default fallback
+     }
+-
+     return $role;
+   }
+ 
