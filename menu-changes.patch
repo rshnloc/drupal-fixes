@@ -109,7 +109,7 @@ index e0e8c270..0133b3c6 100644
 +                           <a href="" title="Global settings">Users</a>
 +                           <ul>
 +                              <li>
-+                                 <a href="/group-management" title="Manage dashboard" data-drupal-link-system-path="/group-management">Manage User</a>
++                                 <a href="/group-management" title="Manage dashboard" data-drupal-link-system-path="/group-management">Manage Groups</a>
 +                              </li>
 +                           </ul>
 +                        </li>
