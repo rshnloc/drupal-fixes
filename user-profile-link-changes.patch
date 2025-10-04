@@ -1,0 +1,34 @@
+diff --git a/web/modules/contrib/opigno_statistics/templates/opigno-statistics-user-achievement.html.twig b/web/modules/contrib/opigno_statistics/templates/opigno-statistics-user-achievement.html.twig
+index 57c991e6..bb051c5c 100644
+--- a/templates/opigno-statistics-user-achievement.html.twig
++++ b/templates/opigno-statistics-user-achievement.html.twig
+@@ -11,7 +11,7 @@
+  * - url: the url the block should lead to.
+  */
+ #}
+-
++{% if text != 'Badges earned' and text != 'Skills acquired' and text != 'Manage connections' %}
+ <div class="link-box">
+   {% if img %}
+     <div class="link-box__type">
+@@ -30,3 +30,4 @@
+     {% endif %}
+   </div>
+ </div>
++{% endif %}
+diff --git a/web/modules/contrib/opigno_statistics/templates/opigno-user-statistics-page.html.twig b/web/modules/contrib/opigno_statistics/templates/opigno-user-statistics-page.html.twig
+index 42b48013..fe486b89 100644
+--- a/templates/opigno-user-statistics-page.html.twig
++++ b/templates/opigno-user-statistics-page.html.twig
+@@ -79,9 +79,9 @@
+         </div>
+ 
+         {% if access_mode == 'advanced' %}
+-          <div class="user-info-connections d-none d-lg-block">
++         <!-- <div class="user-info-connections d-none d-lg-block">
+             {{ user_info.data.connections }}
+-          </div>
++          </div>-->
+         {% endif %}
+       </div>
+ 
