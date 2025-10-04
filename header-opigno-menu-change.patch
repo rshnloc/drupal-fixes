@@ -1,0 +1,19 @@
+diff --git a/web/modules/contrib/opigno_dashboard/templates/opigno-site-header.html.twig b/web/modules/contrib/opigno_dashboard/templates/opigno-site-header.html.twig
+index 1edf1c64..9cba47a8 100644
+--- a/templates/opigno-site-header.html.twig
++++ b/templates/opigno-site-header.html.twig
+@@ -107,12 +107,12 @@
+ 
+                               {# Add "About" link for admin. #}
+                               {% if loop.first and dropdown_menu.is_admin %}
+-                                <li class="user-menu-item">
++                               <!-- <li class="user-menu-item">
+                                   <a href="#" class="user-menu-item-text" data-toggle="modal" data-target="#aboutModal">
+                                     <i class="fi fi-rr-info"></i>
+                                     {{ 'About'|t }}
+                                   </a>
+-                                </li>
++                                </li>-->
+                               {% endif %}
+                             {% endfor %}
+                           </ul>
