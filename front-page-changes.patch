@@ -1,0 +1,51 @@
+diff --git a/web/themes/contrib/aristotle/templates/page/page--front.html.twig b/web/themes/contrib/aristotle/templates/page/page--front.html.twig
+index 3109ed3d..bc28bc38 100644
+--- a/templates/page/page--front.html.twig
++++ b/templates/page/page--front.html.twig
+@@ -47,20 +47,31 @@
+ #}
+ 
+ {{ header }}
+-<div class="page-main" role="main">
++<main class="page-main" role="main">
+   {{ page.help }}
+   <div class="container">
+-    {% if page.sidebar_first %}
+-      <div class="col-lg-4 mb-4 mb-lg-0" id="sidebar-first">
+-        {{ page.sidebar_first }}
++    {% if page.status_messages %}
++      <div class="message-wrapper">
++        {{ page.status_messages }}
+       </div>
+     {% endif %}
+-    <div class="message-wrapper">
+-      {{ page.status_messages }}
++<div class="block-page-title-block">
++    <h1>Dashboard</h1>
++  </div>
++    {{ page.top }}
++
++    <div class="row">
++      {% if page.sidebar_first %}
++        <div class="col-lg-4" id="sidebar-first" style="margin-right:40px">
++          {{ page.sidebar_first }}
++        </div>
++      {% endif %}
++      <div class="{{ page.sidebar_first ? 'col-lg-7' : 'col-lg-12' }}">
++        {{ page.content }}
++      </div>
+     </div>
+-    {{ page.content }}
+   </div>
+-</div>
++</main>
+ 
+ <div class="page-footer" role="banner">
+   <div class="container">
+@@ -72,4 +83,4 @@
+       </div>
+     </div>
+   </div>
+-</div>
++</div>
+\ No newline at end of file
