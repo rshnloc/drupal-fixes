@@ -50,10 +50,10 @@ index e0e8c270..0133b3c6 100644
 +                           <a href="" title="Global settings">Statistics</a>
 +                           <ul>
 +                              <li>
-+                                 <a href="/statistics/dashboard" title="Manage dashboard" data-drupal-link-system-path="/statistics/dashboard">User Statistics</a>
++                                 <a href="/statistics/dashboard" title="User Statistics" data-drupal-link-system-path="/statistics/dashboard">User Statistics</a>
 +                              </li>
 +                              <li>
-+                                 <a href="/admin/people/export-lms/csv" title="Manage dashboard" data-drupal-link-system-path="/admin/people/export-lms/csv">Global Download Report</a>
++                                 <a href="/admin/people/export-lms/csv" title="Global Download Report" data-drupal-link-system-path="/admin/people/export-lms/csv">Global Download Report</a>
 +                              </li>
 +                           </ul>
 +                        </li>
@@ -64,7 +64,12 @@ index e0e8c270..0133b3c6 100644
 +                           <a href="" title="Global settings">Statistics</a>
 +                           <ul>
 +                              <li>
-+                                 <a href="/group-stats" title="Manage dashboard" data-drupal-link-system-path="/group-stats">User Statistics</a>
++                                 <a href="/group-stats" title="User Statistics" data-drupal-link-system-path="/group-stats">User Statistics</a>
++                              </li>
++                           </ul>
++                           <ul>
++                              <li>
++                                 <a href="/group-report" title="Group Report" data-drupal-link-system-path="/group-report">Group Report</a>
 +                              </li>
 +                           </ul>
 +                        </li>
@@ -98,7 +103,7 @@ index e0e8c270..0133b3c6 100644
 +                           <a href="" title="Global settings">Users</a>
 +                           <ul>
 +                              <li>
-+                                 <a href="/admin/people" title="Manage dashboard" data-drupal-link-system-path="admin/config/opigno/dashboard">All Users</a>
++                                 <a href="/admin/people" title="All Users" data-drupal-link-system-path="admin/config/opigno/dashboard">All Users</a>
 +                              </li>
 +                           </ul>
 +                        </li>
@@ -109,7 +114,7 @@ index e0e8c270..0133b3c6 100644
 +                           <a href="" title="Global settings">Users</a>
 +                           <ul>
 +                              <li>
-+                                 <a href="/group-management" title="Manage dashboard" data-drupal-link-system-path="/group-management">Manage Groups</a>
++                                 <a href="/group-management" title="Manage Groups" data-drupal-link-system-path="/group-management">Manage Groups</a>
 +                              </li>
 +                           </ul>
 +                        </li>
