@@ -1,0 +1,29 @@
+diff --git a/web/modules/contrib/opigno_learning_path/opigno_learning_path.module b/web/modules/contrib/opigno_learning_path/opigno_learning_path.module
+index 028a3d15..0c2837fe 100644
+--- a/opigno_learning_path.module
++++ b/opigno_learning_path.module
+@@ -1365,7 +1365,16 @@ function opigno_learning_path_form_group_content_form_alter(&$form, FormStateInt
+     unset($form['group_roles']);
+   }
+ 
++  $current_user = \Drupal::currentUser();
++  
++  // Check for platform-level user managers (can manage members in any group)
++  $is_platform_um = $current_user->hasPermission('manage group members in any group');
++  
++  // Check for group-level user managers (can administer members in this specific group)
++  $is_group_um = $group->hasPermission('administer members', $current_user);
++
+   $form['#title'] = $is_class ? t('Members in class') : t('Members in learning path');
++  if ($is_platform_um || $is_group_um) {
+   $form['btn_create'] = Link::createFromRoute(Markup::create('<i class="fi fi-rr-user-add"></i>' . t('Create new users')), 'opigno_learning_path.membership.create_member',
+     ['group' => $group->id()]
+   )->toRenderable();
+@@ -1374,6 +1383,7 @@ function opigno_learning_path_form_group_content_form_alter(&$form, FormStateInt
+   $form['btn_create']['#attributes']['class'][] = 'btn-rounded';
+   $form['btn_create']['#attributes']['data-dialog-type'] = 'modal';
+   $form['btn_create']['#attributes']['data-dialog-options'] = json_encode(['dialogClass' => 'modal-dialog-sidebar']);
++}
+ 
+   $form['training_users'] = [
+     '#title' => $is_class ? t('Find existing users') : t('Find existing users or groups'),
