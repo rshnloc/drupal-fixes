@@ -1,0 +1,14 @@
+diff --git a/composer.json b/composer.json
+index 8b68043..598a16b 100644
+--- a/composer.json
++++ b/composer.json
+@@ -5,7 +5,7 @@
+     "homepage": "http://drupal.org/project/opigno_scorm",
+     "license": "GPL-2.0-or-later",
+     "require": {
+-        "drupal/core": "^9 || ^10"
++        "drupal/core": "^9 || ^10",
++        "opis/json-schema": "^2.3"
+     }
+ }
+-
