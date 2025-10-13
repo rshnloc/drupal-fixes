@@ -1,0 +1,82 @@
+diff --git a/web/themes/contrib/aristotle/aristotle.theme b/web/themes/contrib/aristotle/aristotle.theme
+index 09971073..8cd10354 100644
+--- a/aristotle.theme
++++ b/aristotle.theme
+@@ -445,6 +445,7 @@ function aristotle_preprocess_menu__main(&$variables) {
+   }
+   $current_user = \Drupal::currentUser();
+   $variables['user_roles_menu'] = $current_user->getRoles();
++  $variables['user_id'] = $current_user->id();
+   // Add management dropdown menu block to the main menu.
+   try {
+     $block = Block::load('opigno_admin');
+diff --git a/web/themes/contrib/aristotle/templates/menu/menu--main.html.twig b/web/themes/contrib/aristotle/templates/menu/menu--main.html.twig
+index e103cbd7..7c373f46 100644
+--- a/templates/menu/menu--main.html.twig
++++ b/templates/menu/menu--main.html.twig
+@@ -17,14 +17,15 @@
+  *     that are not currently visible.
+  *   - in_active_trail: TRUE if the link is in the active trail.
+  *   - user_roles_menu: user roles
++*   -  user_id: user id
+  *
+  * @ingroup themeable
+  */
+ #}
+ {% import _self as menus %}
+-{{ menus.menu_links(items, attributes, 0, management_menu, mobile_extra_links, user_roles_menu) }}
++{{ menus.menu_links(items, attributes, 0, management_menu, mobile_extra_links, user_roles_menu, user_id) }}
+ 
+-{% macro menu_links(items, attributes, menu_level, management_menu, mobile_extra_links, user_roles_menu) %}
++{% macro menu_links(items, attributes, menu_level, management_menu, mobile_extra_links, user_roles_menu, user_id) %}
+   {% import _self as menus %}
+   {% if items %}
+     {% if menu_level == 0 %}
+@@ -75,7 +76,10 @@
+                     <a href="/statistics/dashboard" title="User Statistics" data-drupal-link-system-path="/statistics/dashboard">User Statistics</a>
+                   </li>
+                   <li>
+-                    <a href="/admin/people/export-lms/csv" title="Global Download Report" data-drupal-link-system-path="/admin/people/export-lms/csv">Global Download Report</a>
++                    <a href="/admin/people/export-lms/csv" title="Global Download Report" data-drupal-link-system-path="/admin/people/export-lms/csv">Download Global Report (csv)</a>
++                  </li>
++                   <li>
++                    <a href="/group-stats" title="User Statistics" data-drupal-link-system-path="/group-stats">Group Statistics</a>
+                   </li>
+                 </ul>
+               </li>
+@@ -147,6 +151,35 @@
+     </div>
+   </div>
+ </li>
++{% endif %}
++{% if 'super_administrator' not in user_roles_menu %} 
++<li class="main-menu__item management">
++  <div class="dropdown">
++    <a href="javascript:void();" id="dropdownManagement" class="main-menu__link d-flex align-items-center" data-toggle="dropdown">{{ 'Settings'|t }}</a>
++    <div class="dropdown-menu" role="menu" aria-labelledby="dropdownManagement">
++      <div class="container d-flex">
++        <div class="info">
++          <h2>{{ 'User Management'|t }}</h2>
++        </div>
++        <div class="menu-wrapper">
++          <nav role="navigation" aria-labelledby="block-opigno-admin-menu" id="block-opigno-admin" class="contextual-region">
++            <h2 class="visually-hidden" id="block-opigno-admin-menu">Opigno admin</h2>
++            <ul>
++              <li>
++                <a href="" title="Global settings">Settings</a>
++                <ul>
++                  <li>
++                    <a href="/user/{{ user_id }}/2fa-settings" title="Manage Groups" data-drupal-link-system-path="/group-management">Two Factor Authentication</a>
++                  </li>
++                </ul>
++              </li>
++            </ul>
++          </nav>
++        </div>
++      </div>
++    </div>
++  </div>
++</li>
+ {% endif %}
+     </ul>
+   {% endif %}
