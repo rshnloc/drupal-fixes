@@ -1,0 +1,291 @@
+diff --git a/web/modules/contrib/user_csv_import/src/Controller/UserCsvImportController.php b/web/modules/contrib/user_csv_import/src/Controller/UserCsvImportController.php
+index cebf144c..755e681a 100644
+--- a/src/Controller/UserCsvImportController.php
++++ b/src/Controller/UserCsvImportController.php
+@@ -194,6 +194,31 @@ private static function createUser($values) {
+       try {
+         // If new user stores well, return the user object.
+         if ($user->save()) {
++           // ADD GROUP ASSIGNMENT LOGIC HERE
++        // Check if group assignment is configured and group ID is provided
++        if (!empty($values['group_assignment'])) {
++          try {
++            $group = \Drupal\group\Entity\Group::load($values['group_assignment']);
++            if ($group) {
++              // Check if user is already a member
++              if (!$group->getMember($user)) {
++                $group->addMember($user);
++                
++                // Log the group assignment
++                \Drupal::logger('user_csv_import')->info('User @username added to group @group', [
++                  '@username' => $user->getAccountName(),
++                  '@group' => $group->label(),
++                ]);
++              }
++            }
++          }
++          catch (\Exception $e) {
++            \Drupal::logger('user_csv_import')->error('Error adding user @username to group: @error', [
++              '@username' => $values['name'],
++              '@error' => $e->getMessage(),
++            ]);
++          }
++        }
+           return $user;
+         }
+       }
+diff --git a/web/modules/contrib/user_csv_import/src/Form/UserCsvImportForm.php b/web/modules/contrib/user_csv_import/src/Form/UserCsvImportForm.php
+index 0eb8377b..4596a7f4 100644
+--- a/src/Form/UserCsvImportForm.php
++++ b/src/Form/UserCsvImportForm.php
+@@ -31,6 +31,13 @@ class UserCsvImportForm extends FormBase {
+    */
+   protected $entityManager;
+ 
++  /**
++   * The uploaded file.
++   *
++   * @var array
++   */
++  protected $file;
++
+   /**
+    * User import Form constructor.
+    *
+@@ -46,21 +53,17 @@ public function __construct(MessengerInterface $messenger, EntityFieldManager $e
+    * {@inheritdoc}
+    */
+   public static function create(ContainerInterface $container) {
+-
+     return new static(
+       $container->get('messenger'),
+       $container->get('entity_field.manager')
+     );
+-
+   }
+ 
+   /**
+    * Implements \Drupal\Core\Form\FormInterface::getFormID().
+    */
+   public function getFormID() {
+-
+     return 'user_csv_import_form';
+-
+   }
+ 
+   /**
+@@ -110,6 +113,17 @@ public function buildForm(array $form, FormStateInterface $form_state) {
+       '#disabled' => true,
+     ];
+ 
++    // Group assignment field.
++    $group_options = $this->getGroupOptions();
++    $form['config_options']['group_assignment'] = [
++      '#type' => 'select',
++      '#title' => $this->t('Assign to Group'),
++      '#options' => $group_options,
++      '#empty_option' => $this->t('- Select a group -'),
++      '#description' => $this->t('Select a group to assign all imported users to.'),
++      '#default_value' => $config->get('group_assignment'),
++    ];
++
+     // Separator
+     $form['config_options']['separator'] = [
+       '#type' => 'textfield',
+@@ -119,6 +133,7 @@ public function buildForm(array $form, FormStateInterface $form_state) {
+       '#description' => t('The separator character is used to separate fields in the CSV-file.'),
+       '#size' => 1,
+       '#maxlength' => 1,
++      '#access' => FALSE,
+     ];
+ 
+     // Default password.
+@@ -142,6 +157,7 @@ public function buildForm(array $form, FormStateInterface $form_state) {
+       ],
+       '#description' => t('Ensure this is set to Active if you want the user to be enabled.'),
+       '#default_value' => $stdef ? $stdef : 1,
++      '#access' => FALSE,
+     ];
+ 
+     // Send email on create user.
+@@ -160,6 +176,7 @@ public function buildForm(array $form, FormStateInterface $form_state) {
+     $form['config_fields'] = [
+       '#type' => 'fieldset',
+       '#title' => $this->t('Select fields to import'),
++      '#access' => FALSE,
+     ];
+ 
+     // Get user entity fields.
+@@ -195,6 +212,7 @@ public function buildForm(array $form, FormStateInterface $form_state) {
+       '#title' => $this->t('Save configuration'),
+       '#description' => $this->t('Tick to save the form settings to the database.'),
+       '#default_value' => false,
++      '#access' => FALSE,
+     ];
+ 
+     // File to upload.
+@@ -225,7 +243,6 @@ public function buildForm(array $form, FormStateInterface $form_state) {
+     $form['#theme'] = 'system_config_form';
+ 
+     return $form;
+-
+   }
+ 
+   public function generateSample(&$form, FormStateInterface $form_state) {
+@@ -251,19 +268,24 @@ public function generateSample(&$form, FormStateInterface $form_state) {
+     for ($ii = 0; $ii < 2; $ii++) {
+       $row = [];
+       foreach (array_filter($fields) as $field) {
+-	switch ($field) {
+-	  case 'name':
+-	  case 'mail':
+-	  case 'pass':
+-	  case 'timezone':
++        switch ($field) {
++          case 'name':
++          case 'mail':
++          case 'pass':
++          case 'timezone':
+             $row[] = $sampleusers[$ii][$field];
+-	    break;
+-	  default:
++            break;
++          default:
+             $row[] = 'sample_' . $field . '_' . $ii;
+-	}
++        }
+       }
+       $cc[] = implode($sepchar, $row);
+     }
++    
++    // Add note about group assignment
++    $cc[] = '';
++    $cc[] = 'Note: Users will be automatically assigned to the group selected in the "Assign to Group" field above.';
++    
+     $lines = '';
+     foreach ($cc as $line) {
+       $lines .= $line . PHP_EOL;
+@@ -280,7 +302,6 @@ public function generateSample(&$form, FormStateInterface $form_state) {
+    * {@inheritdoc}
+    */
+   public function validateForm(array &$form, FormStateInterface $form_state) {
+-
+     // Get form data.
+     $roles = $form_state->getValue(['config_options', 'roles']);
+     $fields = $form_state->getValue(['config_fields', 'fields']);
+@@ -318,28 +339,28 @@ public function validateForm(array &$form, FormStateInterface $form_state) {
+     if (!isset($this->file[0])) {
+       $form_state->setErrorByName('file', t('No file chosen.'));
+     }
+-
+   }
+ 
+   /**
+    * {@inheritdoc}
+    */
+   public function submitForm(array &$form, FormStateInterface $form_state) {
+-
+     // Get form data.
+     $file = $this->file[0];
+     $roles = $form_state->getValue(['config_options', 'roles']);
+     $fields = $form_state->getValue(['config_fields', 'fields']);
++    $group_id = $form_state->getValue(['config_options', 'group_assignment']);
+ 
+     // Save config.
+     if ($form_state->getValue('save_config')) {
+       \Drupal::configFactory()->getEditable('user_csv_import.importconfig')
+-      ->set('roles', $roles)
+-      ->set('status', $form_state->getValue(['config_options', 'status']))
+-      ->set('password', $form_state->getValue(['config_options', 'password']))
+-      ->set('registration_email_type', $form_state->getValue(['config_options', 'registration_email_type']))
+-      ->set('config_fields', $fields)
+-      ->save();
++        ->set('roles', $roles)
++        ->set('status', $form_state->getValue(['config_options', 'status']))
++        ->set('password', $form_state->getValue(['config_options', 'password']))
++        ->set('registration_email_type', $form_state->getValue(['config_options', 'registration_email_type']))
++        ->set('config_fields', $fields)
++        ->set('group_assignment', $group_id) // Save group assignment
++        ->save();
+     }
+ 
+     // Construct data to send to the controller.
+@@ -354,30 +375,36 @@ public function submitForm(array &$form, FormStateInterface $form_state) {
+       'separator' => $form_state->getValue(['config_options', 'separator']),
+       'password' => $form_state->getValue(['config_options', 'password']),
+       'status' => $form_state->getValue(['config_options', 'status']),
++      'group_assignment' => $group_id, // Add group assignment to config
+     ];
+ 
+     // Return success message.
+     if ($created = UserCsvImportController::processUpload($file, $config)) {
+-
+-      $this->messenger->addMessage($this->t('Successfully imported @count users.', ['@count' => count($created)]));
++      $message = $this->t('Successfully imported @count users.', ['@count' => count($created)]);
++      
++      // Add group assignment message if group was selected
++      if (!empty($group_id)) {
++        $group = \Drupal\group\Entity\Group::load($group_id);
++        if ($group) {
++          $message .= ' ' . $this->t('All users assigned to group: @group', ['@group' => $group->label()]);
++        }
++      }
++      
++      $this->messenger->addMessage($message);
+     }
+-
+     else {
+-
+       // Return error message.
+       $this->messenger->addWarning($this->t('No users imported.'));
+     }
+ 
+     // Redirect to admin users page.
+     $form_state->setRedirectUrl(new Url('entity.user.collection'));
+-
+   }
+ 
+   /**
+    * Unset user account default fields.
+    */
+   private function filterDefaultFields($fields) {
+-
+     unset($fields['uid']);
+     unset($fields['uuid']);
+     unset($fields['langcode']);
+@@ -394,7 +421,32 @@ private function filterDefaultFields($fields) {
+     unset($fields['user_picture']);
+ 
+     return $fields;
+-
+   }
+ 
+-}
++  /**
++   * Get available groups for selection.
++   *
++   * @return array
++   *   Array of group options.
++   */
++  private function getGroupOptions() {
++    $options = [];
++    
++    try {
++      $group_ids = \Drupal::entityQuery('group')
++        ->accessCheck(FALSE)
++        ->execute();
++      
++      $groups = \Drupal\group\Entity\Group::loadMultiple($group_ids);
++      
++      foreach ($groups as $group) {
++        $options[$group->id()] = $group->label();
++      }
++    }
++    catch (\Exception $e) {
++      \Drupal::logger('user_csv_import')->error('Error loading groups: @error', ['@error' => $e->getMessage()]);
++    }
++    
++    return $options;
++  }
++}
+\ No newline at end of file
