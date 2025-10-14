@@ -1,0 +1,22 @@
+diff --git a/web/modules/contrib/opigno_learning_path/modules/opigno_user_selection/src/Controller/OpignoUserSelectionController.php b/web/modules/contrib/opigno_learning_path/modules/opigno_user_selection/src/Controller/OpignoUserSelectionController.php
+index d62b0aad..a24ccb1f 100644
+--- a/modules/opigno_user_selection/src/Controller/OpignoUserSelectionController.php
++++ b/modules/opigno_user_selection/src/Controller/OpignoUserSelectionController.php
+@@ -162,7 +162,7 @@ public function post($data = NULL) {
+ 
+     $response_data['users'] = (array_map(function ($user) use (&$groups_id, $meta, $map) {
+       if (!$user->access('view')) {
+-        return FALSE;
++       // return FALSE;
+       }
+       $meta->addCacheableDependency($user);
+ 
+@@ -278,7 +278,7 @@ public function training($data = NULL) {
+    * Authenticated users only have access to this route.
+    */
+   public function checkAccess(AccountInterface $account): AccessResultInterface {
+-    return AccessResult::allowedIf($account->isAuthenticated() && $account->hasPermission('access user profiles'));
++    return AccessResult::allowedIf($account->isAuthenticated());
+   }
+ 
+   /**
