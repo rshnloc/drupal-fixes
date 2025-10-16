@@ -1,0 +1,43 @@
+diff --git a/web/modules/contrib/opigno_certificate/opigno_certificate.module b/web/modules/contrib/opigno_certificate/opigno_certificate.module
+index db32e9d2..7222cf7c 100644
+--- a/opigno_certificate.module
++++ b/opigno_certificate.module
+@@ -242,6 +242,7 @@ function template_preprocess_opigno_certificate(array &$variables) {
+     $date_formatter = \Drupal::service('date.formatter');
+     $gid = (int) $referencing_entity->id();
+     $uid = (int) $user->id();
++   
+     try {
+       $completed = opigno_learning_path_completed_on($gid, $uid, TRUE);
+     }
+@@ -251,7 +252,7 @@ function template_preprocess_opigno_certificate(array &$variables) {
+     }
+ 
+     if ($completed) {
+-      $variables['completed_on'] = $date_formatter->format($completed, 'certificate_date');
++      $variables['completed_on'] = $date_formatter->format($completed, 'custom', 'm/d/Y');
+     }
+ 
+     // Get the expiration date.
+diff --git a/web/modules/contrib/opigno_certificate/opigno_certificate.tokens.inc b/web/modules/contrib/opigno_certificate/opigno_certificate.tokens.inc
+index 27401f37..e4d1e151 100644
+--- a/opigno_certificate.tokens.inc
++++ b/opigno_certificate.tokens.inc
+@@ -71,6 +71,17 @@ function opigno_certificate_tokens($type, $tokens, array $data, array $options,
+             $replacements[$original] = $date_formatter->format($completed_on, 'certificate_date');
+           }
+           break;
++          case 'completed_on':
++          $target = $opigno_certificate->get('referencing_entity')->getValue()[0];
++
++          if (!empty($target)) {
++            $gid = $target['target_id'];
++            $uid = \Drupal::currentUser()->id();
++            $completed_on = opigno_learning_path_completed_on($gid, 25, TRUE);
++            $date_formatter = \Drupal::service('date.formatter');
++            $replacements[$original] = $date_formatter->format($completed_on, 'custom', 'm/d/Y');
++          }
++          break;
+ 
+         case 'changed':
+           $date_format = DateFormat::load('medium');
