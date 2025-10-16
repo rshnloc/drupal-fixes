@@ -1,0 +1,40 @@
+diff --git a/web/themes/contrib/aristotle/templates/menu/menu--main.html.twig b/web/themes/contrib/aristotle/templates/menu/menu--main.html.twig
+index 7c373f46..42501087 100644
+--- a/templates/menu/menu--main.html.twig
++++ b/templates/menu/menu--main.html.twig
+@@ -151,35 +151,6 @@
+     </div>
+   </div>
+ </li>
+-{% endif %}
+-{% if 'super_administrator' not in user_roles_menu %} 
+-<li class="main-menu__item management">
+-  <div class="dropdown">
+-    <a href="javascript:void();" id="dropdownManagement" class="main-menu__link d-flex align-items-center" data-toggle="dropdown">{{ 'Settings'|t }}</a>
+-    <div class="dropdown-menu" role="menu" aria-labelledby="dropdownManagement">
+-      <div class="container d-flex">
+-        <div class="info">
+-          <h2>{{ 'User Management'|t }}</h2>
+-        </div>
+-        <div class="menu-wrapper">
+-          <nav role="navigation" aria-labelledby="block-opigno-admin-menu" id="block-opigno-admin" class="contextual-region">
+-            <h2 class="visually-hidden" id="block-opigno-admin-menu">Opigno admin</h2>
+-            <ul>
+-              <li>
+-                <a href="" title="Global settings">Settings</a>
+-                <ul>
+-                  <li>
+-                    <a href="/user/{{ user_id }}/2fa-settings" title="Manage Groups" data-drupal-link-system-path="/group-management">Two Factor Authentication</a>
+-                  </li>
+-                </ul>
+-              </li>
+-            </ul>
+-          </nav>
+-        </div>
+-      </div>
+-    </div>
+-  </div>
+-</li>
+ {% endif %}
+     </ul>
+   {% endif %}
