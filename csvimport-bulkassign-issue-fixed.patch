@@ -1,0 +1,75 @@
+diff --git a/web/modules/contrib/user_csv_import/src/Controller/UserCsvImportController.php b/web/modules/contrib/user_csv_import/src/Controller/UserCsvImportController.php
+index 755e681a..c2848553 100644
+--- a/src/Controller/UserCsvImportController.php
++++ b/src/Controller/UserCsvImportController.php
+@@ -157,6 +157,9 @@ public static function prepareRow(array $row, array $config, array $fields_posit
+         $user_data[$index] = $row[$position];
+       }
+     }
++    if (!empty($config['group_assignment'])) {
++      $user_data['group_assignment'] = $config['group_assignment'];
++    }
+ 
+     return $user_data;
+ 
+diff --git a/web/modules/contrib/user_csv_import/src/Form/UserCsvImportForm.php b/web/modules/contrib/user_csv_import/src/Form/UserCsvImportForm.php
+index 4596a7f4..539f659c 100644
+--- a/src/Form/UserCsvImportForm.php
++++ b/src/Form/UserCsvImportForm.php
+@@ -205,6 +205,12 @@ public function buildForm(array $form, FormStateInterface $form_state) {
+       '#default_value' => 'mail',
+       '#disabled' => true,
+     ];
++    $form['config_fields']['fields']['field_first_name'] = [
++      '#default_value' => 'field_first_name',
++    ];
++    $form['config_fields']['fields']['field_last_name'] = [
++      '#default_value' => 'field_last_name',
++    ];
+ 
+     // Save all form value.
+     $form['save_config'] = [
+@@ -253,12 +259,16 @@ public function generateSample(&$form, FormStateInterface $form_state) {
+       'mail' => 'john@example.com',
+       'pass' => 'examplePW1',
+       'timezone' => 'UTC',
++    'field_first_name' => 'John',
++    'field_last_name' => 'Doe',
+     ];
+     $sampleusers[1] = [
+       'name' => 'jane',
+       'mail' => 'jane@example.com',
+       'pass' => 'examplePW2',
+       'timezone' => 'Europe/Oslo',
++      'field_first_name' => 'Jane',
++    'field_last_name' => 'Smith',
+     ];
+     $content = implode($sepchar, array_filter($fields));
+ 
+@@ -273,6 +283,8 @@ public function generateSample(&$form, FormStateInterface $form_state) {
+           case 'mail':
+           case 'pass':
+           case 'timezone':
++          case 'first_name':
++          case 'last_name':
+             $row[] = $sampleusers[$ii][$field];
+             break;
+           default:
+@@ -282,9 +294,6 @@ public function generateSample(&$form, FormStateInterface $form_state) {
+       $cc[] = implode($sepchar, $row);
+     }
+     
+-    // Add note about group assignment
+-    $cc[] = '';
+-    $cc[] = 'Note: Users will be automatically assigned to the group selected in the "Assign to Group" field above.';
+     
+     $lines = '';
+     foreach ($cc as $line) {
+@@ -434,6 +443,7 @@ private function getGroupOptions() {
+     
+     try {
+       $group_ids = \Drupal::entityQuery('group')
++        ->condition('type', 'opigno_class')
+         ->accessCheck(FALSE)
+         ->execute();
+       
