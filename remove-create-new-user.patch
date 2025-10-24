@@ -1,0 +1,23 @@
+diff --git a/web/modules/contrib/opigno_learning_path/opigno_learning_path.module b/web/modules/contrib/opigno_learning_path/opigno_learning_path.module
+index 028a3d15..373bd771 100644
+--- a/opigno_learning_path.module
++++ b/opigno_learning_path.module
+@@ -1366,9 +1366,6 @@ function opigno_learning_path_form_group_content_form_alter(&$form, FormStateInt
+   }
+ 
+   $form['#title'] = $is_class ? t('Members in class') : t('Members in learning path');
+-  $form['btn_create'] = Link::createFromRoute(Markup::create('<i class="fi fi-rr-user-add"></i>' . t('Create new users')), 'opigno_learning_path.membership.create_member',
+-    ['group' => $group->id()]
+-  )->toRenderable();
+   $form['btn_create']['#attributes']['class'][] = 'use-ajax';
+   $form['btn_create']['#attributes']['class'][] = 'btn';
+   $form['btn_create']['#attributes']['class'][] = 'btn-rounded';
+@@ -1409,7 +1406,7 @@ function opigno_learning_path_form_group_content_form_alter(&$form, FormStateInt
+ 
+   $form['actions']['submit'] = [
+     '#type' => 'submit',
+-    '#value' => t('Send invitation'),
++    '#value' => t('Add User(s) to Group'),
+   ];
+ 
+   $form['#attached']['library'][] = 'core/drupal.dialog.ajax';
